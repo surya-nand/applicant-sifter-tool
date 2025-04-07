@@ -36,3 +36,10 @@ export interface Applicant {
   education: Education;
   skills: string[];
 }
+
+export interface JobRequirement {
+  type: 'skill' | 'experience' | 'education';
+  value: string;
+  importance: number; // 1-10 scale
+}
+

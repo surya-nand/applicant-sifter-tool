@@ -1,7 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Applicant } from "@/types/applicant";
+import { Applicant, JobRequirement } from "@/types/applicant";
 import { format } from "date-fns";
 
 interface ApplicantCardProps {
@@ -15,6 +15,7 @@ interface ApplicantCardProps {
   rank?: number;
   onClick?: () => void;
   isSelected?: boolean;
+  matchedRequirements?: JobRequirement[];
 }
 
 export const ApplicantCard = ({ 
@@ -23,7 +24,8 @@ export const ApplicantCard = ({
   scoreBreakdown,
   rank,
   onClick,
-  isSelected = false
+  isSelected = false,
+  matchedRequirements
 }: ApplicantCardProps) => {
   // Format date to be more readable
   const formatDate = (dateString: string) => {
@@ -125,6 +127,34 @@ export const ApplicantCard = ({
               <span>Edu: {Math.round(scoreBreakdown.education)}</span>
               <span>Exp: {Math.round(scoreBreakdown.experience)}</span>
               <span>Skills: {Math.round(scoreBreakdown.skills)}</span>
+            </div>
+          </div>
+        </CardFooter>
+      )}
+      
+      {matchedRequirements && matchedRequirements.length > 0 && (
+        <CardFooter className="pt-0">
+          <div className="w-full">
+            <p className="text-sm font-medium mb-1">Matched Requirements</p>
+            <div className="flex flex-wrap gap-1">
+              {matchedRequirements.slice(0, 3).map((req, idx) => (
+                <Badge 
+                  key={idx} 
+                  variant="outline" 
+                  className={`text-xs ${
+                    req.type === 'skill' ? 'border-blue-300 bg-blue-50' :
+                    req.type === 'education' ? 'border-green-300 bg-green-50' :
+                    'border-amber-300 bg-amber-50'
+                  }`}
+                >
+                  {req.value}
+                </Badge>
+              ))}
+              {matchedRequirements.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{matchedRequirements.length - 3}
+                </Badge>
+              )}
             </div>
           </div>
         </CardFooter>

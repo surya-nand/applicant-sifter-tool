@@ -2,7 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Applicant } from "@/types/applicant";
+import { Applicant, JobRequirement } from "@/types/applicant";
 import { format } from "date-fns";
 import { Mail, MapPin, Phone } from "lucide-react";
 
@@ -13,9 +13,11 @@ interface ApplicantDetailProps {
     experience: number;
     skills: number;
   };
+  rank?: number;
+  matchedRequirements?: JobRequirement[];
 }
 
-export const ApplicantDetail = ({ applicant, scoreBreakdown }: ApplicantDetailProps) => {
+export const ApplicantDetail = ({ applicant, scoreBreakdown, rank, matchedRequirements }: ApplicantDetailProps) => {
   // Format date to be more readable
   const formatDate = (dateString: string) => {
     try {
@@ -30,7 +32,14 @@ export const ApplicantDetail = ({ applicant, scoreBreakdown }: ApplicantDetailPr
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">{applicant.name}</h2>
+        <div className="flex justify-between items-start">
+          <h2 className="text-2xl font-bold">{applicant.name}</h2>
+          {rank !== undefined && (
+            <Badge variant={rank <= 3 ? "default" : "outline"}>
+              Rank #{rank}
+            </Badge>
+          )}
+        </div>
         
         <div className="mt-2 space-y-2">
           <div className="flex items-center text-muted-foreground">
@@ -94,6 +103,27 @@ export const ApplicantDetail = ({ applicant, scoreBreakdown }: ApplicantDetailPr
             </div>
           </CardContent>
         </Card>
+      )}
+      
+      {matchedRequirements && matchedRequirements.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Matched Requirements</h3>
+          <div className="flex flex-wrap gap-2">
+            {matchedRequirements.map((req, idx) => (
+              <Badge 
+                key={idx} 
+                variant="outline" 
+                className={`${
+                  req.type === 'skill' ? 'border-blue-300 bg-blue-50' :
+                  req.type === 'education' ? 'border-green-300 bg-green-50' :
+                  'border-amber-300 bg-amber-50'
+                }`}
+              >
+                {req.value} ({req.importance}/10)
+              </Badge>
+            ))}
+          </div>
+        </div>
       )}
       
       <div>
